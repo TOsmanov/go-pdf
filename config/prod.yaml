@@ -1,0 +1,26 @@
+environment: "prod"
+
+chrome-timeout: 300s
+urls-limit: 60
+trusted-hosts:
+    - your-domain.com
+
+face:
+    enable: false
+
+core:
+    pdf:
+        selector: "#content"
+        title-selector: "h1"
+        custom-scripts:
+            grab-script: >
+                // grab-script logic
+        service-pages:
+            logo-path: "logo_url"
+    docx:
+        selector-class: "td-content"
+
+http-server:
+    address: "go-pdf:10001"
+    timeout: 600s
+    idleTimeout: 30s

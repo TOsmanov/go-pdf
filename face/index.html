@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en" class="notranslate" translate="no" data-theme="dark">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <script>
+        function Spinner(action, selector) {
+            let icon = selector.querySelector("span.icon")
+            let spinner = selector.querySelector("span.spinner")
+            if (spinner) {
+                spinner.remove()
+            }
+            if (action == "start") {
+                if (icon) {
+                    icon.remove()
+                }
+                selector.insertAdjacentHTML('afterbegin', `<span class="spinner"></span>`)
+            } else if (action == "done") {
+                spinner.remove()
+                selector.insertAdjacentHTML('afterbegin', `<span class="icon">✔️</span>`)
+            } else if (action == "error") {
+                spinner.remove()
+                selector.insertAdjacentHTML('afterbegin', `<span class="icon">❌</span>`)
+            }
+            if (icon) {
+                setTimeout(() => icon.remove(), 3000)
+            }
+        }
+
+        async function Export(format) {
+            document.querySelector(`button[type=${format}]`).disabled = true;
+            valid = formValidator()
+            selector = document.querySelector(`button[type=${format}]`)
+            Spinner("start", selector)
+            if (valid == true) {
+                await fetch(`{{ . }}/${format}`, {
+                    method: 'POST',
+                    contentType: "application/json",
+                    body: JSON.stringify({
+                        'title-page': Boolean(document.querySelector('input#title-page').checked),
+                        'toc-page': Boolean(document.querySelector('input#toc-page').checked),
+                        'title': String(document.querySelector('input[type="title"]').value),
+                        'sub-title': String(document.querySelector('input[type="subtitle"]').value),
+                        'info': String(document.querySelector('input[type="info"]').value),
+                        'urls': String(document.querySelector('textarea').value).split('\n'),
+                        'landscape': String(document.querySelector('select[type="landscape"]').value),
+                        'use-cache': Boolean(document.querySelector('input#use-cache').checked),
+                        'logo-path': String(document.querySelector('input[type="logo-path"]').value),
+                    })
+                })
+                    .then(resp => {
+                        if (resp.status < 400) {
+                            return resp.blob()
+                        } else {
+                            alert('Response error:', resp);
+                            return console.error('Response error:', resp)
+                        }
+                    })
+                    .then(blob => {
+                        console.log(blob)
+                        if (blob.size) {
+                            const link = document.createElement('a');
+                            link.href = URL.createObjectURL(blob);
+                            let today = new Date()
+                            let dd = today.getDate();
+                            let mm = today.getMonth();
+                            let yyyy = today.getFullYear();
+                            let name = "result"
+                            if (String(document.querySelector('input[type="title"]').value).length > 0) {
+                                name = String(document.querySelector('input[type="title"]').value).replaceAll(" ", "_")
+                            }
+                            link.download = `${name}_${dd}_${mm}_${yyyy}.${format}`;
+                            link.click();
+                        }
+                        Spinner("done", selector)
+                        document.querySelector(`button[type=${format}]`).disabled = false
+                }).catch(error => console.error('Error downloading file:', error));
+            } else {
+                alert(valid)
+            }
+            document.querySelector(`button[type=${format}]`).disabled = false;
+        }
+
+        function formValidator() {
+            var urls = String(document.querySelector('textarea').value).split('\n')
+            msg = ""
+            if (urls < 0 || isNaN(urls) ){
+                msg = `Need add links\n`
+            }
+            return true
+        }
+    </script>
+    <style>
+        body {
+            background: white;
+            font-family: 'Roboto', sans-serif;
+        }
+        #main {
+            display: flex
+        }
+        #form {
+            width:100%;
+            height: 90vh;
+            fieldset {
+                border: 0;
+            }
+            fieldset > * {
+                display: block;
+                padding: .5rem
+            }
+            textarea {
+                margin-top: .5rem;
+                margin-bottom: .5rem;
+                border-radius: 4px;
+                font-size: 1.1rem;
+                width: 98.5%;
+                height: calc(65vh - 150px);
+                background: white;
+            }
+            b {
+                font-size: 1.1rem;
+            }
+            input {
+                position: absolute;
+                right: 2.5%;
+                border-radius: 4px;
+                border: 1px solid black;
+                padding: 2px;
+                padding-inline: 4px;
+                font-size: 1.1rem;
+                text-align: left;
+                width: 80%;
+            }
+            input[type=checkbox]{
+                position: inherit;
+                width: 30px;
+            }
+            input[disabled] {
+                background-color: #c5c5c5;
+            }
+            label.disabled{
+                opacity: .5;
+            }
+        }
+        #buttons {
+            display:flex;
+            width: 95%;
+            position: fixed;
+            bottom: 20px;
+            text-align: center;
+            > button {
+                margin-inline: auto;
+                margin-block: .1rem;
+                font-size: 1.4rem;
+                padding: 8px;
+                padding-inline: 46px;
+                border-radius: 50vh;
+                background: black;
+                border: 2px solid black;
+                color: white;
+            }
+            > button:hover {
+                background: #111111;
+                border: 2px solid #111111;
+            }
+            > button:active {
+                background: #7c7c7c;
+                border: 2px solid #7c7c7c;
+            }
+        }
+        span.spinner, span.icon {
+            margin-right: .75rem;
+            margin-left: -1.5rem;
+            width: 18px;
+            height: 18px;
+            font-size: 18px;
+        }
+        span.icon {
+            color: transparent;
+            text-shadow: 0 0 0 white;
+        }
+        span.spinner {
+            border-radius: 50%;
+            display: inline-block;
+            border-top: 3px solid white;
+            border-right: 3px solid transparent;
+            box-sizing: border-box;
+            animation: rotation 1s linear infinite;
+        }
+
+        @keyframes rotation {
+            0% {
+              transform: rotate(0deg);
+            }
+            100% {
+              transform: rotate(360deg);
+            }
+          }
+    </style>
+    <meta charSet="utf-8"/>
+    <title>GO-PDF</title>
+</head>
+<body>
+    <div id="main">
+        <div id="menu" style="
+        position: fixed;
+        display: flex;
+        right: 8px;
+        padding: 4px;
+        background: #ffffff;
+        border-radius: 8px;
+        padding-inline: 8px;
+    "><a href="https://github.com/TOsmanov/go-pdf" style="display: flex;color: #000000;text-decoration: none;"><span style="
+        font-size: 1.5rem;
+        margin: auto;
+        margin-right: .5rem;
+        font-weight: 600;
+    ">GO-PDF on GitHub</span></a></div>
+        <div id="form">
+            <form>
+                <fieldset>
+                    <legend style="
+                    font-weight: 800;
+                    font-size: 1.3rem;
+                    text-decoration: underline;
+                ">Parameters</legend>
+                    <fieldset><legend style="
+                        font-weight: 800;
+                        font-size: 1.3rem;
+                        text-decoration: underline;
+                    ">Service pages</legend>
+                        <label><input type="checkbox" id="title-page" ><b>Title page</b></label>
+                        <label><input type="checkbox" id="toc-page"><b>The page with the table of contents</b></label>
+                        <label class="title-page "><b>Title</b><input type="title" ></label>
+                        <label class="title-page "><b>Sub-title</b><input type="subtitle" ></label>
+                        <label class="title-page "><b>Footer information</b><input type="info" ></label>
+                    </fieldset>
+                    <label>
+                        <b>Landscape</b>
+                        <select type="landscape" style="
+                        font-size: 1.1rem;
+                        margin-left: .5rem;">
+                            <option value="auto" selected>Automatic detection</option>
+                            <option value="1">Landscape orientation of the page</option>
+                            <option value="0">Portrait orientation of the page</option>
+                        </select>
+                    </label>
+                    <label><b>Logo path</b><input type="logo-path" ></label>
+                    <label><input type="checkbox" id="use-cache" ><b>Use cache</b></label>
+                    <label>
+                        <b>URLs</b>
+                        <textarea
+                        title="Add the links you want to export here"
+                        style="resize: none;"
+                        placeholder="https://example.com/link-1/
+https://example.com/link-2/"></textarea>
+                    </label>
+                </fieldset>
+            </form>
+        </div>
+        <div id="buttons">
+            <button type="pdf" onclick="Export('pdf')">Export to PDF</button>
+            <button type="docx" onclick="Export('docx')">Export to DOCX</button>
+        </div>
+    </div>
+</body>
+</html>

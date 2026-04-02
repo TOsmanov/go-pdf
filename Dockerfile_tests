@@ -1,0 +1,27 @@
+FROM ubuntu:24.04
+ENV DEBIAN_FRONTEND=noninteractive
+WORKDIR /app
+RUN apt-get update && \
+    apt-get install -y wget && \
+    apt-get install -y git
+
+# Install Go
+RUN wget https://go.dev/dl/go1.21.5.linux-amd64.tar.gz
+RUN tar -C /usr/local -xf go1.21.5.linux-amd64.tar.gz
+
+# Set env
+ENV PATH=$PATH:/usr/local/go/bin
+ENV GOPATH=/home/go
+ENV PATH=$GOPATH/bin:$PATH
+
+# Installing required packages
+RUN apt-get -y update; \
+    apt-get install -y wget
+
+# Chromium install
+RUN apt-get install -y software-properties-common \
+    && add-apt-repository -y ppa:xtradeb/apps
+RUN apt update \
+    && apt-cache policy chromium \
+    && apt install -y chromium \
+    && apt-cache policy chromium

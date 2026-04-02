@@ -1,0 +1,24 @@
+environment: "local"
+
+chrome-timeout: 120s
+urls-limit: 60
+
+face:
+    enable: true
+
+core:
+    pdf:
+        selector: "#content"
+        title-selector: "h1"
+        custom-scripts:
+            grab-script: >
+                // grab-script logic
+        service-pages:
+            logo-path: "logo_url"
+    docx:
+        selector-class: "td-content"
+
+http-server:
+    address: "localhost:10001"
+    timeout: 120s
+    idleTimeout: 30s

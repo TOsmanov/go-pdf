@@ -1,0 +1,22 @@
+environment: "docker-debug"
+
+chrome-timeout: 120s
+urls-limit: 60
+
+face:
+    enable: true
+    path: "/app/face/index.html"
+
+core:
+    pdf:
+        selector: ".dc-doc-page__content"
+        title-selector: "h1"
+        custom-scripts:
+            grab-script: >
+                // grab script logic
+        service-pages:
+            logo-path: "https://your-site.com/logo.jpg"
+http-server:
+    address: "go-pdf:10001"
+    timeout: 600s
+    idleTimeout: 30s

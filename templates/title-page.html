@@ -1,0 +1,27 @@
+{{ $height := 800 -}}
+{{ $logoMargin := 300 -}}
+{{ $titleMargin := 50 -}}
+{{ $subMargin := 100 -}}
+{{ if .FinalLandscape -}}
+    {{ $height = 290 -}}
+    {{ $logoMargin = 100 -}}
+    {{ $titleMargin = 50 -}}
+    {{ $subMargin := 50 -}}
+{{ end -}}
+<div class="title-page" style="display: block; height: {{ $height }}px; margin-left: 70px; margin-bottom: 100px;">
+    {{ with .Logo -}}
+    <img style="margin-top: {{ $logoMargin }}px; border: none;" src="{{ . }}" width="200px"/>
+    {{ end -}}
+    {{ with .Title -}}
+    <h1 style="font-weight: 700; margin-top: {{ $titleMargin }}px">{{ . }}</h1>
+    {{ end -}}
+    {{ if not .FinalLandscape -}}
+        {{ with .SubTitle -}}
+        <h3 style="margin-top: {{ $subMargin }}px;">{{ . }}</h3>
+        {{ end -}}
+    {{ end -}}
+</div>
+{{ with .FooterTitle -}}
+<div style="display: block; margin-left: 70px;"><h5>{{ . }}</h5></div>
+{{ end -}}
+<div style="page-break-after: always;"></div>

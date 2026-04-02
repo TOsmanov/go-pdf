@@ -1,0 +1,6 @@
+gopdf
+gopdf_cli
+gopdf_server
+tests/
+coverage.out
+data.html

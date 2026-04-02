@@ -1,0 +1,103 @@
+run:
+  tests: true
+
+linters-settings:
+  lll:
+    line-length: 150
+  errcheck:
+    ignore : ""
+  dupl:
+    threshold: 300
+  funlen:
+    lines: 150
+    statements: 80
+  depguard:
+    rules:
+      main:
+        files:
+          - $all
+          - "!$test"
+        allow:
+          - $gostd
+          - github.com/skip2
+          - github.com/fogleman
+          - github.com/go-chi
+          - github.com/ilyakaznacheev
+          - github.com/go-playground
+          - github.com/google/uuid
+          - github.com/chromedp/chromedp
+          - github.com/signintech/gopdf
+          - github.com/chromedp/cdproto/page
+          - github.com/chromedp/cdproto/emulation
+          - github.com/pdfcpu/pdfcpu/pkg/api
+          - github.com/k3a/html2text
+          - github.com/gingfrederik/docx
+          - github.com/fumiama/go-docx
+          - github.com/chromedp/cdproto/runtime
+          - github.com/ledongthuc/pdf
+          - github.com/TOsmanov/go-pdf
+      test:
+        files:
+          - "$test"
+        allow:
+          - $gostd
+          - github.com/stretchr
+          - github.com/chromedp/chromedp
+
+linters:
+  disable-all: true
+  enable:
+    - asciicheck
+    - bodyclose
+    # - deadcode
+    - depguard
+    - dogsled
+    - dupl
+    - durationcheck
+    - errorlint
+    - exhaustive
+    - exportloopref
+    - funlen
+    - gci
+    - gocognit
+    - goconst
+    - gocritic
+    - gocyclo
+    - godot
+    - gofmt
+    - gofumpt
+    - goheader
+    - gomoddirectives
+    - gomodguard
+    - goprintffuncname
+    - gosec
+    - gosimple
+    - govet
+    # - ifshort
+    - importas
+    - ineffassign
+    - lll
+    - makezero
+    - misspell
+    - nestif
+    - nilerr
+    - noctx
+    - nolintlint
+    - prealloc
+    - predeclared
+    - revive
+    - rowserrcheck
+    - sqlclosecheck
+    - staticcheck
+    # - structcheck
+    - stylecheck
+    # - tagliatelle
+    - thelper
+    - tparallel
+    - typecheck
+    - unconvert
+    - unparam
+    - unused
+    # - varcheck
+    - wastedassign
+    - whitespace

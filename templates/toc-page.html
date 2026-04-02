@@ -1,0 +1,38 @@
+<style>
+div.toc-pages {
+    color: black;
+    a {
+        color: black;
+        text-decoration: none;
+    }
+    ul {
+        display: block;
+        list-style-type: none;
+        page-break-inside: avoid;
+        margin-left: 0;
+        padding-left: 0;
+        li {
+            list-style: none;
+            display: block;
+        }
+    }
+    div.toc-page, h3 {
+        page-break-after: avoid;
+        page-break-inside: avoid;
+        break-after: avoid;
+    }
+}
+</style>
+<div class="toc-pages">
+    {{ range . -}}
+    <div class="toc-page" style="margin-bottom:50px;">
+        <span class="h3" style="margin-bottom:20px; page-break-after:avoid;font-weight: 700;">{{ .Index }}   <a href="#{{ .Anchor -}}">{{ .Title }}</a></span>
+        <ul style="page-break-before:avoid; margin-top:8px;">
+            {{ range .Headers -}}
+                <li style="padding-left: calc({{ .Indent }}ch);"><a href="#{{ .Link }}">{{ .Index }}    {{ .Text }}</a></li>
+            {{ end -}}
+        </ul>
+    </div>
+    {{ end -}}
+    <div style="page-break-after: always;"></div>
+</div>
